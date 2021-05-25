@@ -1,31 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:orientation="horizontal"
+    android:background="@drawable/layout_back"
     android:padding="@dimen/common_spacing"
     android:id="@+id/track_container">
 
     <ImageButton
-        android:id="@+id/mb_play_pause"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:id="@+id/ib_play_pause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="@android:color/transparent"
-        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/play"
         android:src="@drawable/ic_play_button"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/track_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:id="@+id/tv_track_name"
+        android:layout_width="240dp"
+        android:layout_height="42dp"
+        android:singleLine="true"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ib_like"
+        app:layout_constraintStart_toEndOf="@+id/ib_play_pause"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@sample/posts.json/data/author" />
+
+    <ImageButton
+        android:id="@+id/ib_like"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/like"
+        android:src="@drawable/ic_like_hollow_48"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_track_duration"
+        android:layout_width="100dp"
+        android:layout_height="16dp"
         android:textAlignment="center"
-        />
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="@+id/tv_track_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_track_name"
+        tools:text="@sample/posts.json/data/duration" />
 
-
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
