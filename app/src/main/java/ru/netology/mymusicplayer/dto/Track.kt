@@ -1,6 +1,6 @@
 package ru.netology.mymusicplayer.dto
 
-data class Song(
+data class Track(
     val id: Int,
     val file: String
 )

@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:background="@drawable/layout_back"
     android:padding="@dimen/common_spacing"
-    android:id="@+id/track_container">
+    android:id="@+id/song_container">
 
     <ImageButton
         android:id="@+id/ib_play_pause"
@@ -21,16 +21,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_track_name"
+        android:id="@+id/tv_song_name"
         android:layout_width="240dp"
         android:layout_height="42dp"
         android:singleLine="true"
         android:textSize="20sp"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ib_like"
         app:layout_constraintStart_toEndOf="@+id/ib_play_pause"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@sample/posts.json/data/author" />
+        tools:text="@sample/posts.json/data/song_name" />
 
     <ImageButton
         android:id="@+id/ib_like"
@@ -44,14 +45,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_track_duration"
+        android:id="@+id/tv_song_duration"
         android:layout_width="100dp"
         android:layout_height="16dp"
         android:textAlignment="center"
         android:textSize="12sp"
         android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="@+id/tv_track_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_track_name"
+        app:layout_constraintEnd_toEndOf="@+id/tv_song_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_song_name"
         tools:text="@sample/posts.json/data/duration" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

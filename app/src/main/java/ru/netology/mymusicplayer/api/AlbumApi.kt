@@ -1,10 +1,12 @@
 package ru.netology.mymusicplayer.api
 
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import ru.netology.mymusicplayer.BuildConfig
 import ru.netology.mymusicplayer.BuildConfig.BASE_URL
 import ru.netology.mymusicplayer.dto.Album
 import java.util.concurrent.TimeUnit
@@ -15,8 +17,14 @@ interface AlbumApi {
 
     companion object {
 
+        private val logging = HttpLoggingInterceptor().apply {
+            if (BuildConfig.DEBUG) {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+        }
+
         private val okhttp = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(logging)
             .build()
 
         private val retrofit = Retrofit.Builder()

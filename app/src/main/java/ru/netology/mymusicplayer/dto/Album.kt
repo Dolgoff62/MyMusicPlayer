@@ -7,5 +7,5 @@ data class Album(
     val artist: String,
     val published: String,
     val genre: String,
-    val songs: List<Song>
+    val tracks: List<Track>
 )
