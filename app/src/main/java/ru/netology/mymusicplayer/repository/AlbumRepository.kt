@@ -3,5 +3,5 @@ package ru.netology.mymusicplayer.repository
 import ru.netology.mymusicplayer.dto.Album
 
 interface AlbumRepository {
-    fun getAlbum(): Album
+    suspend fun getAlbum(): Album
 }

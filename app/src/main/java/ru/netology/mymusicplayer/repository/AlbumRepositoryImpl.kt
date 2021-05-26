@@ -1,34 +1,27 @@
 package ru.netology.mymusicplayer.repository
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import ru.netology.mymusicplayer.api.AlbumApi
 import ru.netology.mymusicplayer.dto.Album
-import java.util.concurrent.TimeUnit
-import ru.netology.mymusicplayer.BuildConfig.BASE_URL
+import ru.netology.mymusicplayer.exceptions.ApiException
+import java.io.IOException
+import ru.netology.mymusicplayer.exceptions.NetworkException
+import ru.netology.mymusicplayer.exceptions.UnknownException
 
 
 class AlbumRepositoryImpl : AlbumRepository {
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .build()
 
-    private val gson = Gson()
-    private val typeAlbumToken = object : TypeToken<Album>() {}
-
-
-    override fun getAlbum(): Album {
-        val request: Request = Request.Builder()
-            .url(BASE_URL)
-            .build()
-
-        return client.newCall(request)
-            .execute()
-            .use { it.body?.string() }
-            .let {
-                gson.fromJson(it, typeAlbumToken.type)
+    override suspend fun getAlbum(): Album {
+        try {
+            val response = AlbumApi.service.getAlbum()
+            if (!response.isSuccessful) {
+                throw ApiException(response.code(), response.message())
             }
+            return response.body() ?: throw ApiException(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkException
+        } catch (e: Exception) {
+            throw  UnknownException
+        }
     }
 }
