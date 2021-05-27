@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = AlbumAdapter(object : OnInteractionListener {
             override fun onPlayPause(track: Track) {
-                playerController(BASE_URL + track.file)
+                viewModel.isPlayed(track.id)
                 currentTrack = track.id
+                playerController(BASE_URL + track.file)
             }
         })
 
@@ -54,13 +55,17 @@ class MainActivity : AppCompatActivity() {
                 tvAuthorName.text = state.album.artist
                 tvGenreLabel.text = state.album.genre
             }
+        }
+        viewModel.data.observe(this) { state ->
 
+            playList = state.tracks
             adapter.submitList(playList)
 
             playList.forEachIndexed { index, track ->
                 if (track.id == currentTrack) currentIndex = index
             }
         }
+
     }
 
     fun playerController(url: String) {
@@ -71,7 +76,11 @@ class MainActivity : AppCompatActivity() {
                     onStop()
                     if (currentIndex <= playList.size) {
                         currentIndex++
-                        player?.setDataSource(BASE_URL + playList[currentIndex].file)
+                        currentTrack++
+                        player?.setDataSource(BASE_URL + playList[currentIndex].file).let {
+                            viewModel.isPlayed(currentTrack - 1)
+                            viewModel.isPlayed(currentTrack)
+                        }
                         onPlay()
                     } else {
                         player?.setDataSource(BASE_URL + playList[0].file)
@@ -84,12 +93,13 @@ class MainActivity : AppCompatActivity() {
             if (player != null && player?.isPlaying == true) {
                 if (currentTrack != currentIndex + 1) {
                     onStop()
+                    viewModel.isPlayed(currentIndex + 1)
                     player?.setDataSource(url)
                     onPlay()
                 } else {
                     onStop()
                 }
-            } else {
+            } else if (player != null) {
                 player?.setOnCompletionListener(nextListener)
                 player?.setDataSource(url)
                 onPlay()
