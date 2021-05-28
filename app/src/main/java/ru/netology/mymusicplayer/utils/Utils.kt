@@ -3,51 +3,44 @@ package ru.netology.mymusicplayer.utils
 import ru.netology.mymusicplayer.dto.Album
 import ru.netology.mymusicplayer.dto.Track
 
-class Utils {
-    companion object {
-        val emptyAlbum = Album(
-            id = 0,
-            title = "",
-            subtitle = "",
-            artist = "",
-            published = "",
-            genre = "",
-            tracks = emptyList()
-        )
+object Utils {
 
-        val emptySong = Track(
-            id = 0,
-            file = "",
-        )
+    val emptyAlbum = Album(
+        id = 0,
+        title = "",
+        subtitle = "",
+        artist = "",
+        published = "",
+        genre = "",
+        tracks = emptyList()
+    )
 
-        fun formateMilliSeccond(milliseconds: Long): String {
-            var finalTimerString = ""
-            var secondsString = ""
+    val emptyTrack = Track(
+        id = 0,
+        file = "",
+        duration = 0L
+    )
 
-            // Convert total duration into time
-            val hours = (milliseconds / (1000 * 60 * 60)).toInt()
-            val minutes = (milliseconds % (1000 * 60 * 60)).toInt() / (1000 * 60)
-            val seconds = (milliseconds % (1000 * 60 * 60) % (1000 * 60) / 1000).toInt()
+    fun formateMillis(milliseconds: Long): String {
 
-            // Add hours if there
-            if (hours > 0) {
-                finalTimerString = "$hours:"
-            }
+        var finalTimerString = ""
+        var secondsString = ""
 
-            // Prepending 0 to seconds if it is one digit
-            secondsString = if (seconds < 10) {
-                "0$seconds"
-            } else {
-                "" + seconds
-            }
-            finalTimerString = "$finalTimerString$minutes:$secondsString"
+        val hours = (milliseconds / (1000 * 60 * 60)).toInt()
+        val minutes = (milliseconds % (1000 * 60 * 60)).toInt() / (1000 * 60)
+        val seconds = (milliseconds % (1000 * 60 * 60) % (1000 * 60) / 1000).toInt()
 
-            //      return  String.format("%02d Min, %02d Sec",
-            //                TimeUnit.MILLISECONDS.toMinutes(milliseconds),
-            //                TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-            //                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+        if (hours > 0) {
+            finalTimerString = "$hours:"
+        }
 
-            // return timer string
-            return finalTimerString
-        }    }
+        secondsString = if (seconds < 10) {
+            "0$seconds"
+        } else {
+            "" + seconds
+        }
+        finalTimerString = "$finalTimerString$minutes:$secondsString"
+
+        return finalTimerString
+    }
 }

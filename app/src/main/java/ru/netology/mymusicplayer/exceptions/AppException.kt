@@ -1,6 +1,5 @@
 package ru.netology.mymusicplayer.exceptions
 
-import android.database.SQLException
 import java.io.IOException
 
 sealed class AppException(var code: String) : RuntimeException() {
@@ -11,6 +10,7 @@ sealed class AppException(var code: String) : RuntimeException() {
         }
     }
 }
+
 class ApiException(val status: Int, code: String) : AppException(code)
 object NetworkException : AppException("network_exception")
 object UnknownException : AppException("error_unknown")

@@ -2,14 +2,17 @@ package ru.netology.mymusicplayer.viewModel
 
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.launch
+import ru.netology.mymusicplayer.db.AppDb
 import ru.netology.mymusicplayer.model.AlbumModel
+import ru.netology.mymusicplayer.model.TrackModel
 import ru.netology.mymusicplayer.repository.AlbumRepository
 import ru.netology.mymusicplayer.repository.AlbumRepositoryImpl
-import kotlinx.coroutines.launch
-import ru.netology.mymusicplayer.model.TrackModel
 
 class AlbumViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: AlbumRepository = AlbumRepositoryImpl()
+    private val repository: AlbumRepository = AlbumRepositoryImpl(
+        AppDb.getInstance(context = application).trackDao()
+    )
 
     val data: LiveData<TrackModel> = repository.data.map(::TrackModel)
 
@@ -25,7 +28,7 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
         try {
             _album.value = AlbumModel(loading = true)
             _album.value = AlbumModel(repository.getAlbum())
-
+            repository.getAllWithDuration()
         } catch (e: Exception) {
             _album.value = AlbumModel(error = true)
         }
@@ -34,6 +37,14 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     fun isPlayed(id: Int) = viewModelScope.launch {
         try {
             repository.isPlayed(id)
+        } catch (e: Exception) {
+            _album.value = AlbumModel(error = true)
+        }
+    }
+
+    fun likeById(id: Int) = viewModelScope.launch {
+        try {
+            repository.likeById(id)
         } catch (e: Exception) {
             _album.value = AlbumModel(error = true)
         }

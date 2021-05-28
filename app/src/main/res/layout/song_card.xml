@@ -10,14 +10,14 @@
     android:padding="@dimen/common_spacing">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/ib_play_pause"
+        android:id="@+id/mb_play_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:checkable="true"
         android:contentDescription="@string/play"
         style="@style/Theme.MyMusicPlayer.IconButton"
-        app:icon="@drawable/play_pause_selector"
+        app:icon="@drawable/ic_play_black_and_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,18 +30,20 @@
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ib_like"
-        app:layout_constraintStart_toEndOf="@+id/ib_play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/mb_like"
+        app:layout_constraintStart_toEndOf="@+id/mb_play_pause"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@sample/posts.json/data/song_name" />
 
-    <ImageButton
-        android:id="@+id/ib_like"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
+        android:checkable="true"
         android:contentDescription="@string/like"
-        android:src="@drawable/ic_like_hollow_48"
+        style="@style/Theme.MyMusicPlayer.IconButton"
+        app:icon="@drawable/like_unlike_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

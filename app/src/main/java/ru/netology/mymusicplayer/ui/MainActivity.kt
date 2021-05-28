@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
                 currentTrack = track.id
                 playerController(BASE_URL + track.file)
             }
+
+            override fun onLike(track: Track) {
+                viewModel.likeById(track.id)
+            }
         })
 
 
@@ -48,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.album.observe(this) { state ->
 
             binding.progressBarView.isVisible = state.loading
-            playList = state.album.tracks
 
             binding.apply {
                 tvAlbumName.text = state.album.title
