@@ -2,6 +2,7 @@ package ru.netology.mymusicplayer.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import ru.netology.mymusicplayer.R
 import ru.netology.mymusicplayer.databinding.SongCardBinding
 import ru.netology.mymusicplayer.dto.Track
 import ru.netology.mymusicplayer.utils.Utils
+import ru.netology.mymusicplayer.viewModel.AlbumViewModel
 
 
 interface OnInteractionListener {
@@ -41,7 +43,8 @@ class TrackViewHolder(
         binding.apply {
             tvSongName.text = track.file
             tvSongDuration.text = Utils.formateMillis(track.duration)
-            playPauseButtonChange(track)
+//            playPauseButtonChange(track)
+
             mbLike.isChecked = track.liked
             mbPlayPause.setOnClickListener {
                 onInteractionListener.onPlayPause(track)
@@ -54,7 +57,8 @@ class TrackViewHolder(
 }
 
 private fun SongCardBinding.playPauseButtonChange(track: Track) {
-    if (track.isPlayed) {
+    val viewModel = ViewModelProvider::class
+    if () {
         mbPlayPause.setIconResource(R.drawable.ic_pause_button)
         mbPlayPause.setIconTintResource(R.color.red)
     } else {

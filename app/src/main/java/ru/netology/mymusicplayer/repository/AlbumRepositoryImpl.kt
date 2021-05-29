@@ -2,10 +2,7 @@ package ru.netology.mymusicplayer.repository
 
 import android.media.MediaMetadataRetriever
 import androidx.lifecycle.map
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import ru.netology.mymusicplayer.BuildConfig
 import ru.netology.mymusicplayer.api.AlbumApi
 import ru.netology.mymusicplayer.dao.TrackDao
@@ -23,11 +20,12 @@ import java.io.IOException
 class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
 
     override val data = dao.getTracks().map(List<TrackEntity>::toDto)
+    private var isPlayedTracksMap: MutableMap<Int, Boolean> = mutableMapOf()
 
     override suspend fun getAllWithDuration(): List<Track> {
         val tracksListWithDuration: List<Track> = coroutineScope {
             getAlbum().tracks.map {
-                it.copy(duration = getDuration(BuildConfig.BASE_URL + it.file))
+                async { it.copy(duration = getDuration(BuildConfig.BASE_URL + it.file)) }
             }
             awaitAll()
         }
@@ -61,7 +59,10 @@ class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
 
     override suspend fun isPlayed(id: Int) {
         try {
-            dao.isPlayed(id)
+            if (isPlayedTracksMap.isEmpty()) {
+                getAlbum().tracks.map { isPlayedTracksMap.put(it.id, false) }
+            }
+            isPlayedTracksMap.forEach { if(it.key == id) it.value.not() else it.value}
         } catch (e: IOException) {
             throw NetworkException
         } catch (e: Exception) {
@@ -86,5 +87,12 @@ class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
             ?.toLong()
             ?: 0
+    }
+
+    override fun isPlayedTrackFindById(id: Int): Boolean {
+        var isPlayedTrackStatus = false
+        isPlayedTracksMap.forEach { if (id == it.key) isPlayedTrackStatus = it.value }
+
+        return isPlayedTrackStatus
     }
 }

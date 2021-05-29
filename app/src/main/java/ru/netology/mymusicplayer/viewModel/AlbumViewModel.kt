@@ -49,4 +49,7 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
             _album.value = AlbumModel(error = true)
         }
     }
+    fun isPlayedTrackFindById(id: Int) : Boolean {
+        return repository.isPlayedTrackFindById(id)
+    }
 }

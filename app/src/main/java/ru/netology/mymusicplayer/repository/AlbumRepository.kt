@@ -12,4 +12,5 @@ interface AlbumRepository {
     suspend fun likeById(id: Int)
     suspend fun getDuration(url: String): Long
     suspend fun getAllWithDuration(): List<Track>
+    fun isPlayedTrackFindById(id: Int) : Boolean
 }

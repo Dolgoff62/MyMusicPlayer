@@ -9,7 +9,6 @@ data class TrackEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val file: String,
-    val isPlayed: Boolean = false,
     val liked: Boolean = false,
     val duration: Long
 ) {
@@ -17,7 +16,6 @@ data class TrackEntity(
         return Track(
             id,
             file,
-            isPlayed,
             liked,
             duration
         )
@@ -29,7 +27,6 @@ fun List<Track>.toEntity(): List<TrackEntity> = map(Track::toEntity)
 fun Track.toEntity(): TrackEntity = TrackEntity(
     id = id,
     file = file,
-    isPlayed = isPlayed,
     liked = liked,
     duration = duration
 )

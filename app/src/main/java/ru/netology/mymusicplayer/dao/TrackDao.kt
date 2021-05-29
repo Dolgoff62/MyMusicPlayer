@@ -18,15 +18,6 @@ interface TrackDao {
     @Query(
         """
         UPDATE TrackEntity SET
-        isPlayed = CASE WHEN isPlayed THEN 0 ELSE 1 END
-        WHERE id = :id
-    """
-    )
-    suspend fun isPlayed(id: Int)
-
-    @Query(
-        """
-        UPDATE TrackEntity SET
         liked = CASE WHEN liked THEN 0 ELSE 1 END
         WHERE id = :id
     """
