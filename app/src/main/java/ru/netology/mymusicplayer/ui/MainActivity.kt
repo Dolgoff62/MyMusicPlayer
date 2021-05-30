@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onLike(track: Track) {
-                viewModel.likeById(track.id)
+//                viewModel.likeById(track.id)
             }
         })
 

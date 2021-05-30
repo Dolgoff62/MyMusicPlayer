@@ -40,7 +40,7 @@ class TrackViewHolder(
 
         binding.apply {
             tvSongName.text = track.file
-            tvSongDuration.text = Utils.formateMillis(track.duration)
+//            tvSongDuration.text = Utils.formateMillis(track.duration)
             playPauseButtonChange(track)
             mbLike.isChecked = track.liked
             mbPlayPause.setOnClickListener {
