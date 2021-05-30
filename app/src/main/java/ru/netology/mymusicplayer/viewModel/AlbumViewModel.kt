@@ -11,7 +11,11 @@ import ru.netology.mymusicplayer.repository.AlbumRepositoryImpl
 class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: AlbumRepository = AlbumRepositoryImpl()
 
-    val data: LiveData<TrackModel> = repository.data.map(::TrackModel)
+//    val data: LiveData<TrackModel> = repository.data.map(::TrackModel)
+
+    private val _data = MutableLiveData(TrackModel())
+    val data: LiveData<TrackModel>
+        get() = _data
 
     private val _album = MutableLiveData(AlbumModel())
     val album: LiveData<AlbumModel>
@@ -25,6 +29,7 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
         try {
             _album.value = AlbumModel(loading = true)
             _album.value = AlbumModel(repository.getAlbum())
+            _data.postValue(TrackModel(tracks = repository.tracks))
         } catch (e: Exception) {
             _album.value = AlbumModel(error = true)
         }
