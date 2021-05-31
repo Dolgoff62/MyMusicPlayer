@@ -1,26 +1,25 @@
 package ru.netology.mymusicplayer.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.mymusicplayer.R
 import ru.netology.mymusicplayer.databinding.SongCardBinding
-import ru.netology.mymusicplayer.dto.Track
+import ru.netology.mymusicplayer.model.TrackUIModel
 import ru.netology.mymusicplayer.utils.Utils
-import ru.netology.mymusicplayer.viewModel.AlbumViewModel
 
 
 interface OnInteractionListener {
-    fun onPlayPause(track: Track) {}
-    fun onLike(track: Track) {}
+    fun onPlayPause(track: TrackUIModel) {}
+    fun onLike(track: TrackUIModel) {}
 }
 
 class AlbumAdapter(
     private val onInteractionListener: OnInteractionListener
-) : ListAdapter<Track, TrackViewHolder>(TrackDiffCallback()) {
+) : ListAdapter<TrackUIModel, TrackViewHolder>(TrackDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding = SongCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -38,12 +37,17 @@ class TrackViewHolder(
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(track: Track) {
+    fun bind(track: TrackUIModel) {
 
         binding.apply {
             tvSongName.text = track.file
-            tvSongDuration.text = Utils.formateMillis(track.duration)
-//            playPauseButtonChange(track)
+            if (track.played) {
+                tvSongDuration.visibility = View.VISIBLE
+                tvSongDuration.text = Utils.formateMillis(track.duration)
+            } else {
+                tvSongDuration.visibility = View.GONE
+            }
+            playPauseButtonChange(track)
 
             mbLike.isChecked = track.liked
             mbPlayPause.setOnClickListener {
@@ -56,9 +60,9 @@ class TrackViewHolder(
     }
 }
 
-private fun SongCardBinding.playPauseButtonChange(track: Track) {
-    val viewModel = ViewModelProvider::class
-    if () {
+private fun SongCardBinding.playPauseButtonChange(track: TrackUIModel) {
+
+    if (track.played) {
         mbPlayPause.setIconResource(R.drawable.ic_pause_button)
         mbPlayPause.setIconTintResource(R.color.red)
     } else {
@@ -67,12 +71,12 @@ private fun SongCardBinding.playPauseButtonChange(track: Track) {
     }
 }
 
-class TrackDiffCallback : DiffUtil.ItemCallback<Track>() {
-    override fun areItemsTheSame(oldItem: Track, newItem: Track): Boolean {
+class TrackDiffCallback : DiffUtil.ItemCallback<TrackUIModel>() {
+    override fun areItemsTheSame(oldItem: TrackUIModel, newItem: TrackUIModel): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Track, newItem: Track): Boolean {
+    override fun areContentsTheSame(oldItem: TrackUIModel, newItem: TrackUIModel): Boolean {
         return oldItem == newItem
     }
 }

@@ -20,26 +20,29 @@ import java.io.IOException
 class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
 
     override val data = dao.getTracks().map(List<TrackEntity>::toDto)
-    private var isPlayedTracksMap: MutableMap<Int, Boolean> = mutableMapOf()
 
-    override suspend fun getAllWithDuration(): List<Track> {
-        val tracksListWithDuration: List<Track> = coroutineScope {
-            getAlbum().tracks.map {
-                async { it.copy(duration = getDuration(BuildConfig.BASE_URL + it.file)) }
-            }
-            awaitAll()
-        }
-        dao.insertTracks(tracksListWithDuration.toEntity())
-        return tracksListWithDuration
-    }
+//    override suspend fun getAllWithDuration(): List<Track> {
+//        val tracksListWithDuration: List<Track> = coroutineScope {
+//            getAlbum().tracks.map {
+//                async { it.copy(duration = getDuration(BuildConfig.BASE_URL + it.file)) }
+//            }.awaitAll()
+//        }
+//        dao.insertTracks(tracksListWithDuration.toEntity())
+//        return tracksListWithDuration
+//    }
 
     override suspend fun getAlbum(): Album {
         try {
             val response = AlbumApi.service.getAlbum()
+
             if (!response.isSuccessful) {
                 throw ApiException(response.code(), response.message())
             }
-            return response.body() ?: throw ApiException(response.code(), response.message())
+
+            val body = response.body() ?: throw ApiException(response.code(), response.message())
+            dao.insertTracks(body.tracks.toEntity())
+
+            return body
         } catch (e: IOException) {
             throw NetworkException
         } catch (e: Exception) {
@@ -47,28 +50,28 @@ class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
         }
     }
 
-    override suspend fun insertTracks() {
-        try {
-            dao.insertTracks(getAlbum().tracks.toEntity())
-        } catch (e: IOException) {
-            throw NetworkException
-        } catch (e: Exception) {
-            throw  UnknownException
-        }
-    }
+//    override suspend fun insertTracks() {
+//        try {
+//            dao.insertTracks(getAlbum().tracks.toEntity())
+//        } catch (e: IOException) {
+//            throw NetworkException
+//        } catch (e: Exception) {
+//            throw  UnknownException
+//        }
+//    }
 
-    override suspend fun isPlayed(id: Int) {
-        try {
-            if (isPlayedTracksMap.isEmpty()) {
-                getAlbum().tracks.map { isPlayedTracksMap.put(it.id, false) }
-            }
-            isPlayedTracksMap.forEach { if(it.key == id) it.value.not() else it.value}
-        } catch (e: IOException) {
-            throw NetworkException
-        } catch (e: Exception) {
-            throw  UnknownException
-        }
-    }
+//    override suspend fun isPlayed(id: Int) {
+//        try {
+//            if (isPlayedTracksMap.isEmpty()) {
+//                getAlbum().tracks.map { isPlayedTracksMap.put(it.id, false) }
+//            }
+//            isPlayedTracksMap.forEach { if(it.key == id) it.value.not() else it.value}
+//        } catch (e: IOException) {
+//            throw NetworkException
+//        } catch (e: Exception) {
+//            throw  UnknownException
+//        }
+//    }
 
     override suspend fun likeById(id: Int) {
         try {
@@ -89,10 +92,5 @@ class AlbumRepositoryImpl(private val dao: TrackDao) : AlbumRepository {
             ?: 0
     }
 
-    override fun isPlayedTrackFindById(id: Int): Boolean {
-        var isPlayedTrackStatus = false
-        isPlayedTracksMap.forEach { if (id == it.key) isPlayedTrackStatus = it.value }
-
-        return isPlayedTrackStatus
-    }
+    override fun daoInsertTrack()
 }

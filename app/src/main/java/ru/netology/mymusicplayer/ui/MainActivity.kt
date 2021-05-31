@@ -13,77 +13,74 @@ import ru.netology.mymusicplayer.mediaObserver.MediaLifecycleObserver
 import ru.netology.mymusicplayer.viewModel.AlbumViewModel
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import ru.netology.mymusicplayer.model.TrackUIModel
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: AlbumViewModel by viewModels()
     private val mediaObserver = MediaLifecycleObserver()
     private var playList: List<Track> = emptyList()
     private var currentIndex = 0
-    private var currentTrack = 0
-
+    private val currentTrackId = MutableLiveData<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         lifecycle.addObserver(mediaObserver)
-
         val adapter = AlbumAdapter(object : OnInteractionListener {
-            override fun onPlayPause(track: Track) {
-                viewModel.isPlayed(track.id)
-                currentTrack = track.id
+            override fun onPlayPause(track: TrackUIModel) {
+                currentTrackId.value = if (track.id == currentTrackId.value) {
+                    null
+                } else {
+                    track.id
+                }
+                viewModel.
                 playerController(BASE_URL + track.file)
             }
-
-            override fun onLike(track: Track) {
+            override fun onLike(track: TrackUIModel) {
                 viewModel.likeById(track.id)
             }
         })
-
-
         binding.rvSongList.adapter = adapter
-
         binding.rvSongList.addItemDecoration(
             DividerItemDecoration(binding.rvSongList.context, DividerItemDecoration.VERTICAL),
         )
-
         viewModel.album.observe(this) { state ->
-
             binding.progressBarView.isVisible = state.loading
-
             binding.apply {
                 tvAlbumName.text = state.album.title
                 tvAuthorName.text = state.album.artist
                 tvGenreLabel.text = state.album.genre
             }
         }
-        viewModel.data.observe(this) { state ->
+        MediatorLiveData<Pair<List<Track>, Int?>>().also { mediator ->
+            mediator.addSource(viewModel.data) {
+                mediator.value = it.tracks to currentTrackId.value
+            }
+            mediator.addSource(currentTrackId) {
+                mediator.value = viewModel.data.value?.tracks.orEmpty() to it
+            }
+        }.observe(this) { (tracks, currentTrack) ->
+            playList = tracks
 
-            playList = state.tracks
-            adapter.submitList(playList)
-
+            adapter.submitList(playList.map {
+                TrackUIModel.fromDto(it, it.id == currentTrack)
+            })
             playList.forEachIndexed { index, track ->
                 if (track.id == currentTrack) currentIndex = index
             }
         }
-
     }
-
     fun playerController(url: String) {
-
         val nextListener =
             MediaPlayer.OnCompletionListener {
                 mediaObserver.apply {
                     onStop()
                     if (currentIndex <= playList.size) {
                         currentIndex++
-                        currentTrack++
-                        player?.setDataSource(BASE_URL + playList[currentIndex].file).let {
-                            viewModel.isPlayed(currentTrack - 1)
-                            viewModel.isPlayed(currentTrack)
-                        }
+                        currentTrackId.value = currentTrackId.value?.inc() ?: 0
+                        player?.setDataSource(BASE_URL + playList[currentIndex].file)
                         onPlay()
                     } else {
                         player?.setDataSource(BASE_URL + playList[0].file)
@@ -91,18 +88,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
         mediaObserver.apply {
             if (player != null && player?.isPlaying == true) {
-                if (currentTrack != currentIndex + 1) {
+                if (currentTrackId.value != currentIndex + 1) {
                     onStop()
-                    viewModel.isPlayed(currentIndex + 1)
                     player?.setDataSource(url)
                     onPlay()
                 } else {
                     onStop()
                 }
             } else if (player != null) {
+                player?.reset()
                 player?.setOnCompletionListener(nextListener)
                 player?.setDataSource(url)
                 onPlay()
