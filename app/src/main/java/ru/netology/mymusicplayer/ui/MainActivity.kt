@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var playList: List<Track> = emptyList()
     private var currentIndex = 0
     private val currentTrackId = MutableLiveData<Int>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -35,9 +36,10 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     track.id
                 }
-                viewModel.
+                currentTrackId.value = track.id
                 playerController(BASE_URL + track.file)
             }
+
             override fun onLike(track: TrackUIModel) {
                 viewModel.likeById(track.id)
             }
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     fun playerController(url: String) {
         val nextListener =
             MediaPlayer.OnCompletionListener {

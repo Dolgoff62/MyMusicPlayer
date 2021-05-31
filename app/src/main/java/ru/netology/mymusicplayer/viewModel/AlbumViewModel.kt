@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import ru.netology.mymusicplayer.db.AppDb
 import ru.netology.mymusicplayer.model.AlbumModel
 import ru.netology.mymusicplayer.model.TrackModel
+import ru.netology.mymusicplayer.model.TrackUIModel
 import ru.netology.mymusicplayer.repository.AlbumRepository
 import ru.netology.mymusicplayer.repository.AlbumRepositoryImpl
 
@@ -28,31 +29,14 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
         try {
             _album.value = AlbumModel(loading = true)
             _album.value = AlbumModel(repository.getAlbum())
-//            repository.getAllWithDuration()
         } catch (e: Exception) {
             _album.value = AlbumModel(error = true)
         }
     }
-
-//    fun isPlayed(id: Int) = viewModelScope.launch {
-//        try {
-//            repository.isPlayed(id)
-//        } catch (e: Exception) {
-//            _album.value = AlbumModel(error = true)
-//        }
-//    }
 
     fun likeById(id: Int) = viewModelScope.launch {
         try {
             repository.likeById(id)
-        } catch (e: Exception) {
-            _album.value = AlbumModel(error = true)
-        }
-    }
-
-    fun takeTrackDuration(url: String) = viewModelScope.launch {
-        try {
-            repository.getDuration(url)
         } catch (e: Exception) {
             _album.value = AlbumModel(error = true)
         }

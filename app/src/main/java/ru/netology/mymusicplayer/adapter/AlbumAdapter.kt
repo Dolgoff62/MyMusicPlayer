@@ -41,12 +41,6 @@ class TrackViewHolder(
 
         binding.apply {
             tvSongName.text = track.file
-            if (track.played) {
-                tvSongDuration.visibility = View.VISIBLE
-                tvSongDuration.text = Utils.formateMillis(track.duration)
-            } else {
-                tvSongDuration.visibility = View.GONE
-            }
             playPauseButtonChange(track)
 
             mbLike.isChecked = track.liked
@@ -62,12 +56,12 @@ class TrackViewHolder(
 
 private fun SongCardBinding.playPauseButtonChange(track: TrackUIModel) {
 
-    if (track.played) {
-        mbPlayPause.setIconResource(R.drawable.ic_pause_button)
-        mbPlayPause.setIconTintResource(R.color.red)
-    } else {
+    if (!track.played) {
         mbPlayPause.setIconResource(R.drawable.ic_play_black_and_white)
         mbPlayPause.setIconTintResource(R.color.light_green)
+    } else {
+        mbPlayPause.setIconResource(R.drawable.ic_pause_button)
+        mbPlayPause.setIconTintResource(R.color.red)
     }
 }
 
