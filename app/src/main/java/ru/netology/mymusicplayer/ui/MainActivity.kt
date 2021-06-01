@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     track.id
                 }
-                currentTrackId.value = track.id
                 playerController(BASE_URL + track.file)
             }
 
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             }
         mediaObserver.apply {
             if (player != null && player?.isPlaying == true) {
-                if (currentTrackId.value != currentIndex + 1) {
+                if (currentTrackId.value != null) {
                     onStop()
                     player?.setDataSource(url)
                     onPlay()
@@ -108,4 +107,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun findTrackInPlayListById(trackUIModel: TrackUIModel): Int {
+        var trackIndex = 0
+        playList.map {
+            if (trackUIModel.id == it.id) trackIndex = playList.indexOf(it)
+        }
+        return trackIndex
+    }
+
 }
